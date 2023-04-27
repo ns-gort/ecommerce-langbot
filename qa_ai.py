@@ -4,6 +4,8 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.llms import OpenAI
 from langchain.chains import RetrievalQA
 from langchain.memory import ConversationBufferMemory
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import ConversationalRetrievalChain
 
 class QABot:
     """
@@ -36,7 +38,7 @@ class QABot:
         self.qa = ConversationalRetrievalChain.from_llm(ChatOpenAI(model='gpt-3.5-turbo'),retriever=vectorstore.as_retriever())
 
     
-    def query_answer(self, query)
+    def query_answer(self, query):
         """ 
         Respond to query using ConversationalRetrievalChain LLM model
 
@@ -53,7 +55,7 @@ class QABot:
         
         # Append response to chat history
         
-        self.chat_history.append((question, result['answer']))
+        self.chat_history.append((query, result['answer']))
         
         # Return answer
         
