@@ -1,0 +1,19 @@
+# Slack Verification Tokens
+
+slack_secret: ''
+slack_oauthtoken: ''
+verification_token: ''
+
+# OpenAI Verification Tokens
+
+openai_token: ""
+
+# Vectorstore Location
+
+vectorstore: "./vectorstore/"
+
+# Data Processing Stuff
+web_site: "https://based.cooking/sitemap.xml"
+
+
+
