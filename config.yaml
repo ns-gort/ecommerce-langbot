@@ -1,7 +1,9 @@
 # Slack Verification Tokens
 
 slack_secret: ''
+
 slack_oauthtoken: ''
+
 verification_token: ''
 
 # OpenAI Verification Tokens
@@ -13,7 +15,10 @@ openai_token: ""
 vectorstore: "./vectorstore/"
 
 # Data Processing Stuff
-web_site: "https://based.cooking/sitemap.xml"
+# https://www.jcrew.com/sitemap-wex/sitemap-pdp1.xml
+
+web_sites: ["https://www.jcrew.com/sitemap-wex/sitemap-pdp1.xml",
+]
 
 
 
