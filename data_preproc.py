@@ -1,14 +1,20 @@
 from langchain.text_splitter import TextSplitter
-from langchain.text_splitter import TokenTextSplitter
+from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.document_loaders.sitemap import SitemapLoader
 import yaml
 import os
+import nest_asyncio
+from bs4 import BeautifulSoup
+import requests
+import xml.etree.ElementTree as ET
 
 ## Main Function: Run on startup ##
 
 if __name__ == "__main__":
+
+    nest_asyncio.apply()
 
     ## Step 1: Open Config File
 
@@ -18,43 +24,30 @@ if __name__ == "__main__":
     ## Step 2: Get necessary api keys
 
     os.environ['OPENAI_API_KEY'] = config_file["openai_token"]
+    embeddings = OpenAIEmbeddings()
 
-    ## Step 3: Use SitemapLoader to scrape webpage
+    ## Step 3: Use SitemapLoader to scrape webpages
 
-    sitemap_loader = SitemapLoader(web_path=config_file["web_site"])
+    docs = []
 
-    sitemap_loader.requests_per_second = 50
+    for site in config_file["web_sites"]:
 
-    docs = sitemap_loader.load()
+        sitemap_loader = SitemapLoader(web_path = site)
 
-    ## Step 4: Clean Docs and Split
+        sitemap_loader.requests_per_second = 25
 
-    preproc_docs = []
-    metadatas = [] 
+        docs = docs + sitemap_loader.load()
 
-    for doc in docs:
-        lines = (line.strip() for line in (doc.page_content).splitlines())
-        final = '\n'.join(line for line in lines if line)
-    
-        final = final.replace("\n", " ")
-    
-        if "https://based.cooking/tags" not in doc.metadata["source"]:
-            preproc_docs.append(final)
-            metadatas.append(doc.metadata)
-        
-    text_splitter = TokenTextSplitter(        
-        chunk_size = 1000,
-        chunk_overlap  = 200
-    )
-    
-    documents = text_splitter.create_documents(preproc_docs, metadatas=metadatas)
+    # Clean data
 
-    ## Step 5: Create embeddings and vectorstore
+    text_splitter = CharacterTextSplitter(chunk_size=8000, chunk_overlap=3000)
 
-    embedding = OpenAIEmbeddings()
+    docs = text_splitter.split_documents(docs)
 
-    db = FAISS.from_documents(documents, embedding)
+    ## Final Step: Create vector database with openai embeddings
 
-    ## Final Step: Save Vectorstore
+    db = FAISS.from_documents(docs, embeddings)
 
-    db.save_local(config_file["vectorstore"])
+    db.save_local("./vectorstore")
+
+   
