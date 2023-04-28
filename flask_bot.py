@@ -81,15 +81,22 @@ def event_hook(request):
 @slack_events_adapter.on("app_mention")
 def handle_message(event_data):
     def send_reply(value):
+
         event_data = value
         message = event_data["event"]
+        
         if message.get("subtype") is None:
             command = message.get("text")
             channel_id = message["channel"]
 
+            # Answer using AI
+
             response_to_query = qa.query_answer(command)
 
             slack_client.chat_postMessage(channel=channel_id, text=response_to_query)
+
+    # Reply to message
+
     thread = Thread(target=send_reply, kwargs={"value": event_data})
     thread.start()
     return Response(status=200)
