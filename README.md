@@ -2,4 +2,4 @@
 
 ___
 
-Slack Ecommerce chatbot using Langchain, OpenAi, Flask, Faiss. 
+Micro project: Slack Ecommerce chatbot using Langchain, OpenAi, Flask, Faiss. 
